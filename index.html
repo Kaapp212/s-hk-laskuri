@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sähkölaskuri: paljonko laite kuluttaa sähköä ja maksaa?</title>
+<meta name="description" content="Laske paljonko sauna, jääkaappi, pesukone, lämpöpumppu ja muut laitteet maksavat sähköä kuukaudessa ja vuodessa. Ilmainen suomenkielinen sähkönkulutuslaskuri.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f6;--ink:#11222e;--muted:#4f616d;--line:#c9d5dc;--card:#fff;--amber:#ffb703;--blue:#164b6e}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.55;padding-bottom:110px}
+h1,h2{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.1;margin:0}
+main{max-width:720px;margin:0 auto;padding:28px 18px 0}
+h1{font-size:clamp(2rem,7vw,3rem);font-weight:700;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:12px 0 24px;max-width:56ch}
+.price{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.price label{font-weight:600}
+.price small{display:block;font-weight:400;color:var(--muted)}
+input[type=text]{font:inherit;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+input[type=text]:focus-visible,input[type=checkbox]:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.price input{width:110px;font-size:1.25rem;font-weight:600;text-align:right}
+h2{font-size:1.5rem;font-weight:700;margin:36px 0 12px}
+#list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.row{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-columns:1fr auto;gap:10px 14px;transition:opacity .15s}
+.row.off{opacity:.5}
+.pick{display:flex;gap:10px;align-items:center;font-weight:600;grid-column:1/-1;cursor:pointer}
+.pick input{width:22px;height:22px;accent-color:var(--blue);margin:0}
+.fields{display:flex;gap:10px}
+.fields label{font-size:.85rem;color:var(--muted);display:block}
+.fields input{width:92px;margin-top:2px;font-size:1rem}
+.cost{text-align:right;align-self:end;min-width:110px}
+.cost strong{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.35rem;display:block}
+.cost span{font-size:.85rem;color:var(--muted)}
+.bar{grid-column:1/-1;height:6px;background:#e3eaee;border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
+.note{color:var(--muted);font-size:.9rem;margin-top:12px}
+.sum{position:fixed;left:0;right:0;bottom:0;background:var(--ink);color:#fff;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px))}
+.sum div{max-width:720px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+.sum small{display:block;color:#b8c7d1;font-size:.8rem}
+.sum b{font-family:"Bricolage Grotesque",system-ui,sans-serif;font-size:1.4rem;font-weight:700}
+.sum .y b{font-size:2rem;color:var(--amber)}
+.tips{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.tips li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.tips strong{display:block}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+summary{font-weight:600;cursor:pointer}
+details p{margin:8px 0 0;color:var(--muted)}
+footer{max-width:720px;margin:36px auto 0;padding:0 18px;color:var(--muted);font-size:.85rem}
+[hidden]{display:none!important}
+.aff{display:grid;gap:10px;padding:0;margin:0;list-style:none}
+.aff a{display:block;background:var(--card);border:1.5px solid var(--blue);border-radius:12px;padding:14px;color:var(--ink);text-decoration:none}
+.aff a:hover{background:#f6fafc}
+.aff a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.aff strong{display:block;color:var(--blue)}
+.disc{font-size:.9rem;color:var(--muted);margin:0 0 12px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Paljonko laite maksaa sähköä?</h1>
+  <p class="lead">Valitse laitteet, kirjoita käyttötunnit ja sähkön hinta. Laskuri näyttää kulutuksen euroina kuukaudessa ja vuodessa.</p>
+
+  <div class="price">
+    <label for="price">Sähkön hinta<small>snt/kWh, mukaan lukien siirto ja verot</small></label>
+    <input id="price" type="text" inputmode="decimal" value="12" autocomplete="off">
+  </div>
+
+  <h2>Laitteet</h2>
+  <ul id="list"></ul>
+  <p class="note">Tehot ja käyttötunnit ovat tyypillisiä keskiarvoja. Voit muuttaa jokaista arvoa laitteesi tietojen mukaan. Teho (W) löytyy yleensä laitteen tyyppikilvestä.</p>
+
+  <h2>Näin säästät sähköä</h2>
+  <ul class="tips">
+    <li><strong>Selvitä suurimmat kuluttajat</strong>Katso ylläolevasta listasta, mikä palkki on pisin. Säästö kannattaa aloittaa siitä.</li>
+    <li><strong>Siirrä käyttöä halvoille tunneille</strong>Jos sinulla on pörssisähkö tai aikasiirto, pesukone ja auton lataus kannattaa ajaa yöllä.</li>
+    <li><strong>Sammuta valmiustilat</strong>Pistorasiaan kytketty ajastin tai jatkojohto kytkimellä sammuttaa laitteet kokonaan.</li>
+    <li><strong>Vaihda valot ledeihin</strong>Ledilamppu kuluttaa vain murto-osan vanhan hehkulampun sähköstä.</li>
+  </ul>
+
+  <section id="tuotteet">
+    <h2>Tuotteet ja palvelut säästöön</h2>
+    <p class="disc">Mainos: tämä osio sisältää kumppanilinkkejä. Jos ostat tai teet sopimuksen linkin kautta, saatan saada provision. Hinta sinulle ei muutu.</p>
+    <ul class="aff">
+      <!-- Korvaa OMA_LINKKI_TÄHÄN omalla kumppanilinkilläsi. Kortti ilmestyy sivulle vasta, kun linkki alkaa https:// -->
+      <li><a href="OMA_LINKKI_TÄHÄN" rel="sponsored noopener" target="_blank"><strong>Vertaile sähkösopimuksia</strong>Katso, löytyykö sinulle edullisempi sopimus.</a></li>
+      <li><a href="OMA_LINKKI_TÄHÄN" rel="sponsored noopener" target="_blank"><strong>Energiamittari</strong>Mittaa laitteiden oikea kulutus pistorasiasta.</a></li>
+      <li><a href="OMA_LINKKI_TÄHÄN" rel="sponsored noopener" target="_blank"><strong>Älypistoke ja ajastin</strong>Sammuta valmiustilat ja ajasta käyttö halvoille tunneille.</a></li>
+      <li><a href="OMA_LINKKI_TÄHÄN" rel="sponsored noopener" target="_blank"><strong>Ledlamput</strong>Pienempi kulutus samalla valolla.</a></li>
+      <li><a href="OMA_LINKKI_TÄHÄN" rel="sponsored noopener" target="_blank"><strong>Lämpöpumput</strong>Vertaile vaihtoehtoja lämmityskulujen pienentämiseen.</a></li>
+    </ul>
+  </section>
+
+  <h2>Usein kysyttyä</h2>
+  <details><summary>Miten sähkön kulutus lasketaan?</summary><p>Kulutus kilowattitunteina (kWh) on laitteen teho kilowatteina kertaa käyttötunnit. Hinta saadaan kertomalla kulutus sähkön hinnalla. Esimerkiksi 1 000 watin laite, joka on päällä 2 tuntia, kuluttaa 2 kWh.</p></details>
+  <details><summary>Minkä sähkön hinnan kannattaa syöttää?</summary><p>Käytä kokonaishintaa, johon kuuluvat sähköenergia, siirto ja verot. Löydät sen sähkölaskustasi: jaa laskun kokonaissumma kulutetuilla kilowattitunneilla.</p></details>
+  <details><summary>Miksi sauna kuluttaa paljon?</summary><p>Sähkökiukaan teho on tyypillisesti 6–9 kW. Termostaatti vähentää kulutusta lämmityksen jälkeen, mutta lämmitys tuo silti selvästi isoimman kulutuspiikin kotitalouden laitteista.</p></details>
+  <details><summary>Ovatko tulokset tarkkoja?</summary><p>Eivät. Laitteiden todellinen kulutus vaihtelee mallin, iän ja käyttötavan mukaan. Laskuri antaa suuntaa-antavan arvion.</p></details>
+</main>
+
+<footer>Laskuri on suuntaa-antava eikä korvaa sähkölaskua tai asiantuntijan arviota.</footer>
+
+<div class="sum" role="status" aria-live="polite">
+  <div>
+    <span><small>Kuukaudessa</small><b id="month">0 €</b></span>
+    <span><small id="kwh">0 kWh/v</small></span>
+    <span class="y"><small>Vuodessa</small><b id="year">0 €</b></span>
+  </div>
+</div>
+
+<script>
+var devices=[
+{n:"Jääkaappi",w:40,h:24,on:1},
+{n:"Pakastin",w:50,h:24,on:1},
+{n:"Sähkökiuas (sauna)",w:6000,h:0.5,on:1},
+{n:"Pesukone",w:700,h:0.8,on:1},
+{n:"Tiskikone",w:1000,h:0.7,on:0},
+{n:"Kuivausrumpu",w:2000,h:0.4,on:0},
+{n:"Ilmalämpöpumppu (keskimäärin)",w:800,h:12,on:0},
+{n:"Valaistus (10 ledilamppua)",w:80,h:5,on:1},
+{n:"Televisio",w:100,h:4,on:0},
+{n:"Pelitietokone",w:350,h:3,on:0},
+{n:"Työpöytätietokone",w:150,h:6,on:0},
+{n:"Auton lämmitystolppa",w:1000,h:2,on:0},
+{n:"Sähköauton kotilataus",w:3700,h:3,on:0}
+];
+var list=document.getElementById("list");
+var priceEl=document.getElementById("price");
+function num(v){var x=parseFloat(String(v).replace(",","."));return isFinite(x)&&x>0?x:0}
+function eur(v,d){return v.toLocaleString("fi-FI",{style:"currency",currency:"EUR",minimumFractionDigits:d,maximumFractionDigits:d})}
+list.innerHTML=devices.map(function(d,i){
+ return '<li class="row'+(d.on?'':' off')+'">'+
+ '<label class="pick"><input class="chk" type="checkbox"'+(d.on?' checked':'')+'><span>'+d.n+'</span></label>'+
+ '<div class="fields">'+
+ '<label>Teho (W)<input class="w" type="text" inputmode="decimal" value="'+d.w+'"></label>'+
+ '<label>Tuntia päivässä<input class="h" type="text" inputmode="decimal" value="'+String(d.h).replace(".",",")+'"></label>'+
+ '</div>'+
+ '<div class="cost"><strong class="m">0 €</strong><span>kuukaudessa</span></div>'+
+ '<div class="bar"><i></i></div></li>';
+}).join("");
+function calc(){
+ var price=num(priceEl.value),rows=list.children,kwh=[],tot=0,i;
+ for(i=0;i<rows.length;i++){
+  var r=rows[i],on=r.querySelector(".chk").checked;
+  var w=num(r.querySelector(".w").value);
+  var h=Math.min(num(r.querySelector(".h").value),24);
+  var k=on?w/1000*h*365:0;
+  kwh.push(k);tot+=k;
+  r.classList.toggle("off",!on);
+ }
+ var max=Math.max.apply(null,kwh.concat([1]));
+ for(i=0;i<rows.length;i++){
+  rows[i].querySelector(".m").textContent=eur(kwh[i]*price/100/12,2);
+  rows[i].querySelector(".bar i").style.width=(kwh[i]/max*100)+"%";
+ }
+ var year=tot*price/100;
+ document.getElementById("month").textContent=eur(year/12,2);
+ document.getElementById("year").textContent=eur(year,0);
+ document.getElementById("kwh").textContent=Math.round(tot).toLocaleString("fi-FI")+" kWh/v";
+}
+list.addEventListener("input",calc);
+list.addEventListener("change",calc);
+priceEl.addEventListener("input",calc);
+var shown=0;
+Array.prototype.forEach.call(document.querySelectorAll(".aff a"),function(a){var ok=/^https?:\/\//.test(a.getAttribute("href"));a.parentNode.hidden=!ok;if(ok)shown++;});
+if(!shown)document.getElementById("tuotteet").hidden=true;
+calc();
+</script>
+</body>
+</html>
